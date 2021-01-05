@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birb</title>
+</head>
+<body style="height: 100vh; background: #111; text-align: center;">
+    <canvas style="border: 0.5px solid skyblue;" id="sky" width=400 height=400></canvas>
+    <script>
+        screen = sky.getContext("2d");
+        const birb = new Image();
+        birb.src = "birb.png"
+        birbX = 10;
+        birbY = 200;
+        birbDY = 0;
+        birbSize = 24;
+        interval = 24;
+        laserX = 400;
+        laserWidth = 50;
+        laserTopGapY = 24;
+        laserGap = 200;
+        canvasSize = 400;
+        gravity = 0.3;
+        score = 0;
+        bestScore = 0;
+        clouds = {"Cloud 1.png":1.8911564625850341, "Cloud 2.png":2.212121212121212, "Cloud 3.png":1.9202898550724639};
+        cloudsImg = Object.keys(clouds);
+        cloudsSize = Object.values(clouds);
+        cloudX = 400;
+        cloudY = Math.floor(Math.random() * 100);
+        cloudSize = 50;
+        cloud2X = 400;
+        cloud2Y = Math.floor(Math.random() * 125) + 75;
+        cloud2Size = 69;
+        sky.onclick = () => (birbDY = 7)
+        val = Math.floor(Math.random() * 3);
+        val2 = Math.floor(Math.random() * 3);
+        if(val == val2){
+            if(val2 == 0) val2 = 1;
+            if(val2 == 1) val2 = 0;
+            if(val2 == 2) val2 = 1;
+        }
+        setInterval(() => {
+            screen.fillStyle = "skyblue";
+            screen.fillRect(0,0,canvasSize,canvasSize);
+            birbY -= birbDY -= gravity;
+            cloudX -= 2.5;
+            cloud2X -= 1.25;
+            screen.drawImage(birb, birbX, birbY, birbSize * (158/134), birbSize);
+            cloud = new Image();
+            cloud.src = cloudsImg[val];
+            cloudWidth = cloudsSize[val];
+            cloud2 = new Image();
+            cloud2.src = cloudsImg[val2];
+            cloud2Width = cloudsSize[val2];
+            if(cloudX < -cloudSize){
+                val = Math.floor(Math.random() * 3);
+                cloudX = 400;
+                cloudY = Math.floor(Math.random() * 100) + 20;
+                cloud.src = cloudsImg[val];
+                cloudWidth = cloudsSize[val];
+            }
+            if(cloud2X < -cloud2Size){
+                val2 = Math.floor(Math.random() * 3);
+                if(val == val2){
+                    if(val2 == 0) val2 = 1;
+                    if(val2 == 1) val2 = 0;
+                    if(val2 == 2) val2 = 1;
+                }
+                cloud2X = 400;
+                cloud2Y = Math.floor(Math.random() * 100) + 20;
+                cloud2.src = cloudsImg[val2];
+                cloud2Width = cloudsSize[val2];
+            }
+            screen.drawImage(cloud, cloudX, cloudY, cloudSize * cloudWidth, cloudSize);
+            screen.drawImage(cloud2, cloud2X, cloud2Y, cloud2Size * cloud2Width, cloud2Size);
+            screen.fillStyle = "red"
+            laserX -= 4;
+            if (laserX < -laserWidth){
+                laserX = canvasSize; 
+                laserTopGapY = laserGap * Math.random();
+            };
+            screen.fillRect(laserX, 0, laserWidth, laserTopGapY)
+            screen.fillRect(laserX, laserTopGapY + laserGap, laserWidth, canvasSize);
+            screen.fillStyle = "black";
+            screen.fillText((laserX < -44) && (`Score: ${score++}`) || (`Score: ${score}`), 9, 50);
+            if(score == 10){screen.fillText("WOW!", 180, 50)}
+            if(score == 20){screen.fillText("AMAZING!", 180, 50)}
+            if(score == 40){screen.fillText("GODLIKE!", 180, 50)}
+            if(score == 50){screen.fillText("ENUF OMFG!", 180, 50)}
+            bestScore = bestScore < score ? score : bestScore;
+            screen.fillText(`Best: ${bestScore}`, 9, 25);
+            if((birbY < laserTopGapY || birbY > laserTopGapY + laserGap)
+             && (laserX < birbSize * (158/134)) 
+             || birbY > canvasSize){
+                birbX = 10; 
+                birbY = 200;
+                laserX = canvasSize;
+                score = 0;
+            }
+        }, interval)
+        setInterval(() => {
+            
+        }, 0.1)
+        
+    </script>
+</body>
+</html>
